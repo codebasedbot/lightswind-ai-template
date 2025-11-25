@@ -102,7 +102,7 @@ const Calendar = () => {
           mode="range"
           selected={range}
           onSelect={setRange}
-          required={false}
+          // required={false} <-- REMOVE THIS LINE
           {...commonDayPickerProps}
         />
       )}

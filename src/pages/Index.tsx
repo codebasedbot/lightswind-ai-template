@@ -1,11 +1,11 @@
+import React from 'react'
 
 const Index = () => {
+    return (
+        <div>
 
-  return (
-    <div className='overflow-hidden min-h-screen flex flex-col gap-40'>
-
-    </div>
-  )
+        </div>
+    )
 }
 
 export default Index

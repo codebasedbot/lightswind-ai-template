@@ -4,10 +4,23 @@ import { motion, useInView, HTMLMotionProps } from "framer-motion";
 import { twMerge } from "tailwind-merge";
 import clsx from "clsx";
 
-// Re-implementing the 'cn' utility function directly for self-containment
-function cn(...inputs: clsx.ClassValue[]) {
+// --- Utility Functions ---
+
+// 1. Define the required type for clsx to resolve the TypeScript error
+// This makes the component code self-contained for the 'cn' utility.
+type ClassValue = string | number | ClassDictionary | ClassArray | undefined | null | boolean;
+interface ClassDictionary {
+  [key: string]: any;
+}
+interface ClassArray extends Array<ClassValue> { }
+
+// 2. The 'cn' utility function (combined clsx and twMerge)
+function cn(...inputs: ClassValue[]) {
+  // @ts-ignore: clsx is imported, so the runtime should be fine.
   return twMerge(clsx(inputs));
 }
+
+// --- Context and Provider ---
 
 interface SidebarContextType {
   expanded: boolean;
@@ -23,7 +36,6 @@ interface SidebarContextType {
   menuItemRefs: React.MutableRefObject<Map<string, HTMLDivElement | null>>;
   menuRef: React.RefObject<HTMLDivElement>;
   updateIndicatorPosition: (id: string | null) => void;
-  // New: Function to notify provider when a menu item ref is added/removed
   notifyMenuItemRefChange: () => void;
 }
 
@@ -59,7 +71,6 @@ export function SidebarProvider({
   );
   const menuRef = React.useRef<HTMLDivElement>(null);
 
-  // NEW: State to force re-evaluation when menuItemRefs content might have changed
   const [menuRefsVersion, setMenuRefsVersion] = React.useState(0);
 
   const isControlled = controlledExpanded !== undefined;
@@ -81,12 +92,10 @@ export function SidebarProvider({
     [isControlled]
   );
 
-  // NEW: Callback to increment the version when a menu item ref is added/removed
   const notifyMenuItemRefChange = React.useCallback(() => {
     setMenuRefsVersion((prev) => prev + 1);
   }, []);
 
-  // Helper function to encapsulate indicator positioning logic
   const updateIndicatorPosition = React.useCallback(
     (id: string | null) => {
       const indicator = menuRef.current?.querySelector(
@@ -114,14 +123,11 @@ export function SidebarProvider({
             indicator.style.opacity = "1";
           }
         } else {
-          // If selectedItem is not found (e.g., not yet mounted or invalid ID)
-          // Ensure the indicator is hidden until the item is ready
           if (indicator) {
             indicator.style.opacity = "0";
           }
         }
       } else {
-        // If no active ID, hide the indicator
         if (indicator) {
           indicator.style.opacity = "0";
         }
@@ -147,17 +153,10 @@ export function SidebarProvider({
       }
     }
     setActiveMenuItem(potentialMenuItemValue);
-    // No need to call updateIndicatorPosition directly here.
-    // The useLayoutEffect below, which depends on menuRefsVersion, will handle it.
   }, [window.location.pathname, window.location.search]);
 
   // Primary useLayoutEffect for synchronous indicator updates
   React.useLayoutEffect(() => {
-    // This effect runs whenever activeMenuItem changes OR when menuRefsVersion increments.
-    // By depending on menuRefsVersion, we ensure that if an item registers its ref
-    // AFTER activeMenuItem is set (e.g., on initial load/navigation),
-    // this effect will
-    // re-run and find the newly available ref.
     updateIndicatorPosition(activeMenuItem);
   }, [activeMenuItem, menuRefsVersion, menuRef, updateIndicatorPosition]);
 
@@ -184,13 +183,15 @@ export function SidebarProvider({
         menuItemRefs,
         menuRef,
         updateIndicatorPosition,
-        notifyMenuItemRefChange, // Expose the new notification function
+        notifyMenuItemRefChange,
       }}
     >
       {children}
     </SidebarContext.Provider>
   );
 }
+
+// --- Hook ---
 
 export function useSidebar() {
   const context = React.useContext(SidebarContext);
@@ -202,7 +203,9 @@ export function useSidebar() {
   return context;
 }
 
-interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
+// --- Components ---
+
+interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 export function Sidebar({ className, children, ...props }: SidebarProps) {
   const { expanded } = useSidebar();
@@ -211,8 +214,7 @@ export function Sidebar({ className, children, ...props }: SidebarProps) {
     <div
       className={cn(
         "h-full min-h-screen z-40 w-56 relative",
-        // expanded ? "" : "w-16",
-        "bg-background border-r   shadow-sm",
+        "bg-background border-r shadow-sm",
         "fixed lg:sticky top-0 md:top-0",
         expanded ? "left-0" : "md:left-0 -left-full",
         className
@@ -227,7 +229,7 @@ export function Sidebar({ className, children, ...props }: SidebarProps) {
 }
 
 interface SidebarTriggerProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> { }
 
 export function SidebarTrigger({ className, ...props }: SidebarTriggerProps) {
   const { expanded, onChange } = useSidebar();
@@ -256,7 +258,7 @@ export function SidebarTrigger({ className, ...props }: SidebarTriggerProps) {
   );
 }
 
-interface SidebarHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface SidebarHeaderProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 export function SidebarHeader({
   className,
@@ -268,7 +270,7 @@ export function SidebarHeader({
   return (
     <div
       className={cn(
-        "flex h-16 items-center border-b   px-4",
+        "flex h-16 items-center border-b px-4",
         expanded ? "justify-between" : "justify-center",
         className
       )}
@@ -279,7 +281,7 @@ export function SidebarHeader({
   );
 }
 
-interface SidebarContentProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface SidebarContentProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 export function SidebarContent({
   className,
@@ -296,14 +298,14 @@ export function SidebarContent({
       )}
       {...props}
     >
-      <div ref={scrollRef} className="h-full pb-12 overflow-auto  ">
+      <div ref={scrollRef} className="h-full pb-12 overflow-auto">
         {children}
       </div>
     </div>
   );
 }
 
-interface SidebarGroupProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface SidebarGroupProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 export function SidebarGroup({
   className,
@@ -317,7 +319,7 @@ export function SidebarGroup({
   );
 }
 
-interface SidebarGroupLabelProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface SidebarGroupLabelProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 export function SidebarGroupLabel({
   className,
@@ -344,7 +346,7 @@ export function SidebarGroupLabel({
 }
 
 interface SidebarGroupContentProps
-  extends React.HTMLAttributes<HTMLDivElement> {}
+  extends React.HTMLAttributes<HTMLDivElement> { }
 
 export function SidebarGroupContent({
   className,
@@ -358,7 +360,7 @@ export function SidebarGroupContent({
   );
 }
 
-interface SidebarFooterProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface SidebarFooterProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 export function SidebarFooter({
   className,
@@ -370,7 +372,7 @@ export function SidebarFooter({
   return (
     <div
       className={cn(
-        "flex border-t   p-4",
+        "flex border-t p-4",
         expanded
           ? "flex-row items-center justify-between"
           : "flex-col justify-center",
@@ -383,7 +385,7 @@ export function SidebarFooter({
   );
 }
 
-interface SidebarMenuProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface SidebarMenuProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 export function SidebarMenu({
   className,
@@ -393,7 +395,6 @@ export function SidebarMenu({
   const { menuRef } = useSidebar();
 
   return (
-    // In your SidebarMenu component's div for the indicator:
     <div ref={menuRef} className={cn("relative", className)} {...props}>
       <div
         className="sidebar-menu-indicator opacity-0 absolute ease-in-out 
@@ -403,8 +404,7 @@ export function SidebarMenu({
         className="sidebar-menu-indicator/10 opacity-0 absolute 
         ease-in-out 
       rounded-md bg-primarylw/10 dark:bg-greedy/10"
-      />{" "}
-      {/* Removed border classes */}
+      />
       {children}
     </div>
   );
@@ -430,7 +430,6 @@ export function SidebarMenuItem({
   ...props
 }: SidebarMenuItemProps) {
   const itemRef = React.useRef<HTMLDivElement>(null);
-  // NEW: Get notifyMenuItemRefChange from context
   const { activeMenuItem, menuItemRefs, notifyMenuItemRefChange } =
     useSidebar();
   const menuItemId = value || React.useId();
@@ -438,21 +437,17 @@ export function SidebarMenuItem({
 
   const isInView = useInView(itemRef, { once: false, amount: 0.5 });
 
-  // Register this menu item when it mounts
-  // and NOTIFY the provider about the change
+  // Register this menu item when it mounts and NOTIFY the provider
   React.useEffect(() => {
     if (itemRef.current) {
       menuItemRefs.current.set(menuItemId, itemRef.current);
-      // Notify the provider that a ref has been added, potentially triggering
-      // the useLayoutEffect if this item is the active one.
       notifyMenuItemRefChange();
     }
     return () => {
       menuItemRefs.current.delete(menuItemId);
-      // Also notify when a ref is removed (component unmounts)
       notifyMenuItemRefChange();
     };
-  }, [menuItemRefs, menuItemId, notifyMenuItemRefChange]); // Added notifyMenuItemRefChange to deps
+  }, [menuItemRefs, menuItemId, notifyMenuItemRefChange]);
 
   return (
     <motion.div
@@ -460,7 +455,6 @@ export function SidebarMenuItem({
       className={cn("mb-1 scrollbar-hide", className)}
       data-value={menuItemId}
       data-state={isActive ? "active" : "inactive"}
-      // initial={{ scale: 1, opacity: 0.5, x: -0 }}
       animate={{
         scale: isInView ? 1 : 0.6,
         opacity: isInView ? 1 : 0.5,
@@ -497,17 +491,15 @@ export function SidebarMenuButton({
 
   const handleClick = React.useCallback(() => {
     setActiveMenuItem(menuItemId);
-    // Explicitly call updateIndicatorPosition immediately on click.
-    // This provides immediate visual feedback for direct clicks, overriding
-    // any potential slight delay from the useLayoutEffect waiting for version update.
+    // Explicitly call updateIndicatorPosition immediately on click for immediate feedback.
     updateIndicatorPosition(menuItemId);
 
     if (props.onClick && typeof props.onClick === "function") {
       const dummyEvent = {
         currentTarget: {} as EventTarget & HTMLDivElement,
         target: {} as EventTarget,
-        preventDefault: () => {},
-        stopPropagation: () => {},
+        preventDefault: () => { },
+        stopPropagation: () => { },
       } as React.MouseEvent<HTMLDivElement>;
       props.onClick(dummyEvent);
     }
