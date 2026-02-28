@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { cn } from "../../lib/utils"; // Optional: For class merging utility
+import { cn } from "../lib/utils"; // Optional: For class merging utility
 
 type GlassFolderProps = {
   icon?: React.ReactNode;
@@ -16,7 +16,7 @@ const GlassFolder: React.FC<GlassFolderProps> = ({ icon, className }) => {
         className
       )}
     >
-      <div className="relative w-60 h-40 cursor-pointer origin-bottom [perspective:1500px] z-50">
+      <div className="relative w-60 h-40 cursor-pointer origin-bottom [perspective:1500px] z-10">
         {/* Top tab */}
         <div
           className="bg-blue-600/30 backdrop-blur-md w-full h-full origin-top rounded-2xl rounded-tl-none 

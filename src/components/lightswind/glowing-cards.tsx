@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
-import { cn } from '../../lib/utils';
+import { cn } from '../lib/utils';
 
 export interface GlowingCardProps {
   children: React.ReactNode;
@@ -163,7 +163,7 @@ export const GlowingCards: React.FC<GlowingCardsProps> = ({
             ref={overlayRef}
             className={cn(
               "absolute inset-0 pointer-events-none select-none",
-              "opacity-0 transition-all duration-[var(--animation-duration)] ease-out"
+              "opacity-0 transition-all duration-[&lsqb;var(--animation-duration)&rsqb;] ease-out"
             )}
             style={{
               // String concatenation for WebkitMask and mask

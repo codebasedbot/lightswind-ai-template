@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from "../../lib/utils"; // Assuming 'cn' is a utility for merging class names
+import { cn } from "../utils";
 
 export interface AuroraTextEffectProps {
   text: string;
@@ -13,14 +13,14 @@ export interface AuroraTextEffectProps {
     fourth?: string;
   };
   blurAmount?:
-    | "blur-none"
-    | "blur-sm"
-    | "blur-md"
-    | "blur-lg"
-    | "blur-xl"
-    | "blur-2xl"
-    | "blur-3xl"
-    | string;
+  | "blur-none"
+  | "blur-sm"
+  | "blur-md"
+  | "blur-lg"
+  | "blur-xl"
+  | "blur-2xl"
+  | "blur-3xl"
+  | string;
   animationSpeed?: {
     border?: number;
     first?: number;

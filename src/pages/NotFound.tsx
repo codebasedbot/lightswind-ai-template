@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/lightswind/button";
+import { Card, CardContent } from "@/components/lightswind/card";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";

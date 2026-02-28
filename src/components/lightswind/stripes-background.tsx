@@ -1,4 +1,4 @@
-// components/ui/StripesBackground.tsx
+// components/lightswind/StripesBackground.tsx
 import React from "react";
 import clsx from "clsx";
 

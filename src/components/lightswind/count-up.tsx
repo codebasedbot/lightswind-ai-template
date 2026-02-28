@@ -1,7 +1,6 @@
-"use client";
 import React, { useState, useEffect, useRef } from "react";
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
-import { cn } from "../../lib/utils";
+import { cn } from "../lib/utils";
 
 // Helper function to format the number
 const formatValue = (val: number, precision: number, sep: string): string => {
