@@ -20,17 +20,17 @@ interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
-  ({ 
-    className, 
-    children, 
-    viewportRef, 
+  ({
+    className,
+    children,
+    viewportRef,
     maxHeight,
     showScrollbars = true,
     scrollable = true,
     orientation = "vertical",
     smooth = false,
     theme = "default",
-    ...props 
+    ...props
   }, ref) => {
     const internalRef = React.useRef<HTMLDivElement>(null);
     const resolvedRef = viewportRef || internalRef;
@@ -69,6 +69,7 @@ const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
             smooth && "scroll-smooth",
             showScrollbars ? themeClasses[theme] : "scrollbar-none"
           )}
+          data-lenis-prevent
         >
           {children}
         </div>
@@ -88,12 +89,12 @@ interface ScrollBarProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const ScrollBar = React.forwardRef<HTMLDivElement, ScrollBarProps>(
-  ({ 
-    className, 
-    orientation = "vertical", 
+  ({
+    className,
+    orientation = "vertical",
     size = "default",
     visible = false,
-    ...props 
+    ...props
   }, ref) => {
     // Size classes
     const sizeClasses = {

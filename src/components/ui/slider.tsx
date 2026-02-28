@@ -330,7 +330,7 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps & Omit<React.HTMLAtt
             className={cn(
               "absolute block h-5 w-5 rounded-full border-2 border-primary bg-background shadow-sm",
               // Key change: Optimized transition for immediate feedback
-              "transition-all duration-[50ms] ease-out", // Very short transition for responsiveness
+              "transition-all duration-[&lsqb;50ms&rsqb;] ease-out", // Very short transition for responsiveness
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               "hover:scale-110",
               draggingIndex === index && "scale-110 cursor-grabbing", // Apply dragging style
