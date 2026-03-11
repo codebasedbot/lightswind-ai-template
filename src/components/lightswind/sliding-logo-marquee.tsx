@@ -34,7 +34,7 @@ export interface SlidingLogoMarqueeProps {
 }
 
 export function SlidingLogoMarquee({
-  items,
+  items = [],
   speed = 1,
   pauseOnHover = true,
   enableBlur = true,
@@ -56,8 +56,9 @@ export function SlidingLogoMarquee({
   const containerRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(autoPlay);
 
+  const safeItems = Array.isArray(items) ? items : [];
   // CORE FIX: Duplicating the items for a seamless loop
-  const duplicatedItems = useMemo(() => [...items, ...items], [items]);
+  const duplicatedItems = useMemo(() => [...safeItems, ...safeItems], [safeItems]);
 
   const handleItemClick = (item: SlidingLogoMarqueeItem) => {
     if (item.href) {
@@ -237,10 +238,10 @@ export function SlidingLogoMarquee({
 
             {/* Rendered Items: Original Set + Duplicate Set */}
             <ul className="sliding-marquee-list text-foreground" aria-hidden={false}>
-              {items.map((item, index) => itemRenderer(item, index, false))}
+              {safeItems.map((item, index) => itemRenderer(item, index, false))}
 
               {/* Duplicate is key to the seamless loop */}
-              {items.map((item, index) => itemRenderer(item, index, true))}
+              {safeItems.map((item, index) => itemRenderer(item, index, true))}
             </ul>
 
             {enableBlur && (
