@@ -73,7 +73,7 @@ export interface TeamCarouselProps {
 }
 
 export const TeamCarousel: React.FC<TeamCarouselProps> = ({
-  members,
+  members = [],
   title = "OUR TEAM",
   titleSize = "2xl",
   titleColor = "rgba(0, 76, 255, 1)",
